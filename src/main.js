@@ -7,10 +7,11 @@ import Element from 'element-ui'
 import axios from 'axios'
 import HelloWorld from './components/HelloWorld'
 import 'element-ui/lib/theme-chalk/index.css';
+import Bus from '../src/components/child-com/bus'
 
 Vue.use(Element)
 Vue.prototype.$http=axios
-
+Vue.prototype.$bus=Bus
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -18,5 +19,5 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
 })

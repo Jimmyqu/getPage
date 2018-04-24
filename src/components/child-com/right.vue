@@ -1,25 +1,48 @@
 <template>
     <div id="right">
       <el-row :gutter="20" >
-        <el-col :span="6"  v-for="i in [1,2,3,4]">
-          <el-card :body-style="{ padding: '0px' }"  shadow="hover">
-            <div style="padding: 14px;">
-              <span>好吃的汉堡</span>
+        <el-col :span="6" v-for="item,index in Data" :key="index">
+          <el-card :body-style="{padding:'0px'}"  shadow="hover">
+            <div>
+              <span>{{item.name}}</span>
               <div class="bottom clearfix">
-                <el-button type="text" class="button">点击添加到收银台</el-button>
+                <el-button type="text" class="button" @click="addItems(item)">点击添加</el-button>
               </div>
             </div>
           </el-card>
         </el-col>
-
-
       </el-row>
     </div>
 </template>
 
 <script>
     export default {
-        name: "right"
+        name: "right",
+      data(){
+        return{
+          Data: [{
+            name: '牛肉大餐',
+            price: 1,
+          }, {
+            name: '油条',
+            price: 2,
+          }, {
+            name: '吹风机',
+            price: 3,
+          }, {
+            name: '皮鞋',
+            price: 4,
+          }]
+        }
+      },
+      created(){
+
+      },
+      methods:{
+          addItems(e){
+            this.$bus.$emit('getItem',e)
+          }
+      }
     }
 </script>
 
