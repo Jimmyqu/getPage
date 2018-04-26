@@ -1,5 +1,5 @@
 <template>
-  <div id="mid">
+  <el-col :span="24" id="mid">
     <el-table
       :data="fdata"
       style="width: 100%">
@@ -30,12 +30,30 @@
         label="操作"
         width="100">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+
           <el-button type="text" size="small" @click="DelClick(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-  </div>
+    <el-row>
+      <el-col :span="12" :offset="6" style="display: flex;justify-content: space-between ">
+        <el-button round type="primary" @click="getPay">订单结算</el-button>
+        <el-button round type="danger">删除订单</el-button>
+      </el-col>
+    </el-row>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <span>一共支付：{{total}}元</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitPay">确 定</el-button>
+      </span>
+    </el-dialog>
+  </el-col>
 </template>
 
 <script>
@@ -43,56 +61,73 @@
         name: "mid",
       created() {
         this.$bus.$on('getItem', target => {
-          this.tableData.push(target)
-          let obj={}
-          for(let i in this.tableData){
-            if(obj[this.tableData[i].name]){
-              obj[this.tableData[i].name]++
-            }else{
-              obj[this.tableData[i].name]=1
+            if(this.fdata.indexOf(target)===-1){
+              let num=1
+              this.$set(target,'num',num)
+              this.$set(target,'total',num*target.price)
+              this.fdata.push(target)
+              this.fdata=Array.from(new Set(this.fdata))
+            }else {
+              this.fdata[this.fdata.indexOf(target)].num+=1
+              this.fdata[this.fdata.indexOf(target)].total=this.fdata[this.fdata.indexOf(target)].num*this.fdata[this.fdata.indexOf(target)].price
             }
-          }
-
-          let arr =Array.from(new Set(this.tableData))
-          arr.map((item)=>{
-            if(item.name in obj){
-              item.num=obj[item.name]
-              item.total=obj[item.name]*item.price
-            }else{
-              console.log('asda')
-            }
-          })
-          this.fdata=Array.from(new Set(this.tableData))
         });
       },
       data() {
         return {
-          tableData: [],
-          all:{},
-          fdata:[]
+          num:0,
+          fdata:[],
+          dialogVisible:false,
+          total:0
         }
       },
       methods: {
-        handleClick(row) {
-          console.log(row);
-        },
-        DelClick(row){
-          console.log(row.name)
-          for(let i in this.fdata){
-            if(row.name===this.fdata[i].name){
-              this.fdata.splice(i,1)
+        DelClick(val){
+          for (let index in this.fdata){
+            if(val.name===this.fdata[index].name){
+              if(this.fdata[index].num>0){
+                this.fdata[index].num--;
+                this.fdata[index].total=this.fdata[index].num*this.fdata[index].price
+              }else {
+                this.fdata.splice(index,1)
+              }
             }
           }
-          this.tableData=this.fdata
-          console.log(this.fdata)
+        },
+        getPay(){
+          if(this.fdata.length>0){
+            for (let index in this.fdata){
+              this.total+=this.fdata[index].total
+            }
+            this.dialogVisible=true
+          }else {
+            this.$message({
+              message: '请先添加商品',
+              type: 'error'
+            });
+          }
+
+        },
+        handleClose(done) {
+          this.$confirm('确认取消订单？')
+            .then(x=> {
+              done();
+              console.log(x)
+            })
+            .catch(_ => {});
+        },
+        submitPay(){
+          this.total=0
+          this.fdata=[]
+          this.dialogVisible = false
         }
-      },
+      }
     }
 </script>
 
 <style scoped>
   #mid{
-    flex:6;
+    flex:3;
     background-color: slategray;
     height: 800px;
   }

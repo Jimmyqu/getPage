@@ -14,7 +14,24 @@ Vue.prototype.$http=axios
 Vue.prototype.$bus=Bus
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.needLogin){ //判断路由权限信息
+      if(true){   //读取用户登录状态
+        next()
+      }else {
+        next({path: '/'})
+        Element.Message({
+              message: '请先登录',
+              type: 'error'
+            });
+      }
+  }else {
+      next()
+  }
+})
+
+
 new Vue({
   el: '#app',
   router,

@@ -16,7 +16,14 @@ export default new Router({
     {
       path: '/index',
       name: 'index',
-      component: index
+      component: index,
+      meta:{
+        needLogin:true
+      }
+    },{
+      path: '*',
+      redirect:'/'
     }
   ]
 })
+

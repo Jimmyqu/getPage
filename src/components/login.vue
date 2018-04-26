@@ -50,14 +50,15 @@
       methods:{
         singup(){
           this.form.login=true
-          setTimeout(()=>{
-            this.form.login=false
-            this.$router.push('/index')
-            this.$message({
-              message: '登陆成功',
-              type: 'success'
-            });
-          },2000)
+          this.$router.push('/index')
+          // setTimeout(()=>{
+          //   this.form.login=false
+          //   this.$router.push('/index')
+          //   this.$message({
+          //     message: '登陆成功',
+          //     type: 'success'
+          //   });
+          // },2000)
         },
         reset(){
           this.form.name=''
